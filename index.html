@@ -1,0 +1,143 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Web Project</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header, nav, footer { background-color: #004080; color: white; text-align: center; padding: 1em; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; }
+    section { padding: 20px; }
+    input, textarea, button, select { display: block; margin: 10px 0; padding: 10px; width: 100%; max-width: 500px; }
+    .container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around; }
+    .card { border: 1px solid #ccc; padding: 15px; width: 300px; background: #f4f4f4; }
+    @media (max-width: 768px) { .card { width: 90%; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Portfolio</h1>
+</header>
+
+<nav>
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#todo">To-Do List</a>
+  <a href="#products">Products</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am a web developer learning to build dynamic and responsive websites using HTML, CSS, and JavaScript.</p>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+  <div class="container">
+    <div class="card">Responsive Portfolio</div>
+    <div class="card">Note Taking App</div>
+    <div class="card">Product Listing Page</div>
+  </div>
+</section>
+
+<section id="todo">
+  <h2>To-Do List / Notes</h2>
+  <input id="todoInput" placeholder="Add a task or note">
+  <button onclick="addTodo()">Add</button>
+  <ul id="todoList"></ul>
+</section>
+
+<section id="products">
+  <h2>Product Listing</h2>
+  <select onchange="filterProducts(this.value)">
+    <option value="all">All</option>
+    <option value="category1">Category 1</option>
+    <option value="category2">Category 2</option>
+  </select>
+  <div id="productList" class="container"></div>
+</section>
+
+<section id="contact">
+  <h2>Contact Me</h2>
+  <form onsubmit="return validateForm()">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="email" id="email" placeholder="Your Email" required>
+    <textarea id="message" placeholder="Your Message" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+</section>
+
+<footer>
+  <p>&copy; 2025 My Portfolio Project</p>
+</footer>
+
+<script>
+  // To-Do List
+  function addTodo() {
+    const input = document.getElementById("todoInput");
+    let todos = JSON.parse(localStorage.getItem("todos")) || [];
+    if (input.value.trim()) {
+      todos.push(input.value);
+      localStorage.setItem("todos", JSON.stringify(todos));
+      input.value = "";
+      renderTodos();
+    }
+  }
+
+  function renderTodos() {
+    const list = document.getElementById("todoList");
+    list.innerHTML = "";
+    const todos = JSON.parse(localStorage.getItem("todos")) || [];
+    todos.forEach((todo, index) => {
+      const li = document.createElement("li");
+      li.textContent = todo;
+      const btn = document.createElement("button");
+      btn.textContent = "❌";
+      btn.onclick = () => {
+        todos.splice(index, 1);
+        localStorage.setItem("todos", JSON.stringify(todos));
+        renderTodos();
+      };
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+  }
+  renderTodos();
+
+  // Product Filter
+  const products = [
+    { name: "Product A", category: "category1" },
+    { name: "Product B", category: "category2" },
+    { name: "Product C", category: "category1" }
+  ];
+
+  function filterProducts(category) {
+    const list = document.getElementById("productList");
+    list.innerHTML = "";
+    products.filter(p => category === "all" || p.category === category)
+      .forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.textContent = p.name;
+        list.appendChild(div);
+      });
+  }
+  filterProducts("all");
+
+  // Form Validation
+  function validateForm() {
+    const email = document.getElementById("email").value;
+    if (!email.includes("@")) {
+      alert("Invalid email format");
+      return false;
+    }
+    alert("Form submitted successfully!");
+    return true;
+  }
+</script>
+
+</body>
+</html>
